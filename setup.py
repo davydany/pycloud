@@ -11,7 +11,12 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=6.0', ]
+requirements = [
+    'Click>=6.0',
+    'sultan>=0.8.1',
+    'boto>=2.49.0',
+    'PyYAML>=3.0'
+]
 
 setup_requirements = [ ]
 
@@ -35,7 +40,7 @@ setup(
     description="VDMS Test",
     entry_points={
         'console_scripts': [
-            'vdms_test=vdms_test.cli:main',
+            'pycloud=vdms_test.pycloud.cli:pycloud',
         ],
     },
     install_requires=requirements,

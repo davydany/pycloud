@@ -1,0 +1,4 @@
+---
+- debug:
+    echo: Hello World
+    whoami: true

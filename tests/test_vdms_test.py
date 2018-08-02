@@ -26,9 +26,9 @@ class TestVdms_test(unittest.TestCase):
     def test_command_line_interface(self):
         """Test the CLI."""
         runner = CliRunner()
-        result = runner.invoke(cli.main)
+        result = runner.invoke(cli.vdms_test)
         assert result.exit_code == 0
         assert 'vdms_test.cli.main' in result.output
-        help_result = runner.invoke(cli.main, ['--help'])
+        help_result = runner.invoke(cli.vdms_test, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output
