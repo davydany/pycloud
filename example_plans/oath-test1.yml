@@ -1,0 +1,6 @@
+---
+- ec2:
+    region: us-east-1a
+    ami_id:  ami-456b493a
+    instance_type: t2.micro
+    security_group: None

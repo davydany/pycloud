@@ -1,6 +1,6 @@
-from vdms_test.logger import get_logger
+from pycloud.logger import get_logger
 
-from vdms_test.base import Base
+from pycloud.base import Base
 
 logger = get_logger()
 

@@ -1,11 +1,12 @@
 import click
 import textwrap
 
-from vdms_test.base import Base
+from pycloud.base import Base
 
 class ImproperlyConfiguredProvisionerError(ValueError):
 
     pass
+
 
 class BaseProvisioner(Base):
 
@@ -47,6 +48,11 @@ class BaseProvisioner(Base):
         self.kwargs = kwargs
         self.validate_kwargs()
 
+    def verify_is_not_null(self, name, val):
+
+        if val == None:
+            raise ValueError('"%s" should not be null' % name)
+
     def validate_kwargs(self):
         '''
         Validate the kwargs
@@ -54,8 +60,13 @@ class BaseProvisioner(Base):
         if self.kwargs == None:
             raise ImproperlyConfiguredProvisionerError('Provisioner was not instantiated with arguments. Call set_arguments first.')
 
-        base_allowed_args = ['PLAN', 'AWS_ACCESS_KEY', 'AWS_SECRET_KEY']
-        allowed_args = self.required_args + self.optional_args + base_allowed_args
+        allowed_args = ['PLAN', 'AWS_ACCESS_KEY', 'AWS_SECRET_KEY']
+        if self.required_args != None:
+            allowed_args += self.required_args
+
+        if self.optional_args != None:
+            allowed_args += self.optional_args
+
         provided_args = self.kwargs.keys()
 
         # validate required args

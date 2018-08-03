@@ -1,4 +1,4 @@
-from vdms_test.logger import get_logger
+from pycloud.logger import get_logger
 
 class Base(object):
     '''

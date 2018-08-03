@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=vdms_test
+set SPHINXPROJ=pycloud
 
 if "%1" == "" goto help
 

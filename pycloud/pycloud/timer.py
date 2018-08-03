@@ -1,7 +1,10 @@
 import click
 import datetime
+import sys
 import time
 import traceback
+
+LINE_LIMIT = 120
 
 class TimeContext(object):
 
@@ -16,12 +19,12 @@ class TimeContext(object):
 
     def print_header(self, header):
 
-        click.secho('--| ' + '{:25}'.format(header) + ' |' + '-' * 49, fg='green')
+        click.secho('--| ' + '{:25}'.format(header) + ' |' + '-' * (LINE_LIMIT-31), fg='green')
 
     def print_footer(self, time_taken_sec):
 
         time_obj = datetime.time(second=int(time_taken_sec))
-        click.secho('-' * 50 + ' Time Taken to Execute: {:34}'.format(time_obj.strftime('%H:%M:%S')), fg='green')
+        click.secho('-' * (LINE_LIMIT-30) + ' Time Taken to Execute: {:34}'.format(time_obj.strftime('%H:%M:%S')), fg='green')
 
     def __enter__(self):
 
@@ -35,8 +38,9 @@ class TimeContext(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
 
         self.etime = time.time()
-        if exc_type:
-            click.secho("An exception occurred while running.", fg='red')
-            click.secho(traceback.format_exc(exc_tb), fg='yellow')
-
         self.print_footer(self.etime - self.stime)
+        if exc_tb:
+            click.secho("An exception occurred while running.", fg='red')
+            for line in traceback.format_tb(exc_tb):
+                click.secho(line, fg='yellow')
+            click.secho("Halting Execution Now!!", fg='red')

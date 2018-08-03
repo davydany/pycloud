@@ -2,8 +2,8 @@ import click
 import os
 import pwd
 
-from vdms_test.pycloud.provisioners.base import BaseProvisioner
-from vdms_test.pycloud.registry import Registry
+from pycloud.pycloud.provisioners.base import BaseProvisioner
+from pycloud.pycloud.registry import Registry
 
 class DebugProvisioner(BaseProvisioner):
 
@@ -33,6 +33,8 @@ class ErrorProvisioner(BaseProvisioner):
 
     description = 'A provisioner that always throws an exception. ' \
                   'Useful to see how PyCloud behaves when an exception occurrs.'
+
+    slug = 'err'
 
     required_args = ['error_msg']
 

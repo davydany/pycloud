@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-"""Unit test package for vdms_test."""
+"""Unit test package for pycloud."""

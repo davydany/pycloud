@@ -1,4 +1,4 @@
-* VDMS Test version:
+* PyCloud version:
 * Python version:
 * Operating System:
 

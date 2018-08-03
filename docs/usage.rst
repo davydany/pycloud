@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use VDMS Test in a project::
+To use PyCloud in a project::
 
-    import vdms_test
+    import pycloud

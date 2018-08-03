@@ -1,4 +1,4 @@
-Welcome to VDMS Test's documentation!
+Welcome to PyCloud's documentation!
 ======================================
 
 .. toctree::

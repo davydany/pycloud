@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Console script for vdms_test."""
+"""Console script for pycloud."""
 import sys
 import click
 
-from vdms_test.logger import configure_logger, get_logger
-from vdms_test.pycloud.provisioners.plan_executor import PlanExecutor
+from pycloud.logger import configure_logger, get_logger, ALLOWED_LOG_LEVELS
+from pycloud.pycloud.provisioners.plan_executor import PlanExecutor
 
 logger = get_logger()
 
@@ -15,8 +15,12 @@ logger = get_logger()
               help='AWS Access Key. You can also set environment variable AWS_ACCESS_KEY.')
 @click.option('-s', '--secret-key', envvar='AWS_SECRET_KEY',
               help='AWS Secret Key. You can also set environment variable AWS_SECRET_KEY.')
+@click.option('-l', '--log-level', envvar='PYCLOUD_LOG_LEVEL',
+              help='Set the Log Level for the command. Default: INFO',
+              type=click.Choice([l.lower() for l in ALLOWED_LOG_LEVELS]),
+              default='INFO')
 @click.pass_context
-def pycloud(ctx, access_key, secret_key):
+def pycloud(ctx, access_key, secret_key, log_level):
     """
     PyCloud Provisions a VM in the cloud,
     """
@@ -34,12 +38,12 @@ def pycloud(ctx, access_key, secret_key):
             fg='red')
         raise click.BadParameter('Secret Key is not set.')
 
+    configure_logger(level=log_level)
     logger.debug("Access KEY: %s" % (access_key))
     logger.debug("Secret KEY: %s" % ("*" * len(secret_key)))
 
     ctx.obj['AWS_ACCESS_KEY'] = access_key
     ctx.obj['AWS_SECRET_KEY'] = secret_key
-    configure_logger()
     return 0
 
 @pycloud.command()

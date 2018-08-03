@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `vdms_test` package."""
+"""Tests for `pycloud` package."""
 
 
 import unittest
 from click.testing import CliRunner
 
-from vdms_test import vdms_test
-from vdms_test import cli
+from pycloud import pycloud
+from pycloud import cli
 
 
-class TestVdms_test(unittest.TestCase):
-    """Tests for `vdms_test` package."""
+class TestPyCloud(unittest.TestCase):
+    """Tests for `pycloud` package."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -26,9 +26,9 @@ class TestVdms_test(unittest.TestCase):
     def test_command_line_interface(self):
         """Test the CLI."""
         runner = CliRunner()
-        result = runner.invoke(cli.vdms_test)
+        result = runner.invoke(cli.pycloud)
         assert result.exit_code == 0
-        assert 'vdms_test.cli.main' in result.output
-        help_result = runner.invoke(cli.vdms_test, ['--help'])
+        assert 'pycloud.cli.main' in result.output
+        help_result = runner.invoke(cli.pycloud, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output

@@ -4,10 +4,10 @@ import time
 import traceback
 from yaml import load
 
-from vdms_test.base import Base
-from vdms_test.pycloud.registry import Registry
-from vdms_test.pycloud.errors import InvalidPlanError
-from vdms_test.pycloud.timer import TimeContext
+from pycloud.base import Base
+from pycloud.pycloud.registry import Registry
+from pycloud.pycloud.errors import InvalidPlanError
+from pycloud.pycloud.timer import TimeContext
 
 
 class PlanExecutor(Base):
@@ -28,7 +28,7 @@ class PlanExecutor(Base):
 
     def validate_plan(self):
 
-        self.logger.info("Validating Plan.")
+        self.logger.debug("Validating Plan.")
         if not isinstance(self.__plan, list):
             self.logger.error("The plan provided is not a list.")
             raise InvalidPlanError('Plan is not a list')
@@ -46,7 +46,6 @@ class PlanExecutor(Base):
 
                 provisioner_slug = list(current_plan.keys())[0]
                 provisioner_details = current_plan[provisioner_slug]
-                print(provisioner_details)
 
                 self.logger.debug("Instantiating Provisioner '%s' with details '%s'" % (
                     provisioner_slug,
@@ -58,7 +57,7 @@ class PlanExecutor(Base):
                 provisioner.set_arguments(**provisioner_details)
                 yield provisioner
         except ValueError as e:
-
+            click.secho("ERROR: %s" % e, fg='red')
             raise InvalidPlanError(e)
 
 

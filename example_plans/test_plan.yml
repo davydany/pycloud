@@ -2,3 +2,8 @@
 - debug:
     echo: Hello World
     whoami: true
+- err:
+    error_msg: This is a sample error message
+- debug:
+    echo: Hello After Exception
+    whoami: true
