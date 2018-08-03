@@ -79,7 +79,7 @@ def dry_run(ctx, access_key, secret_key, plan):
 
 @pycloud.command()
 @click.pass_context
-def help(ctx):
+def docs(ctx):
     '''
     Dumps the documentation for the available provisioners.
     '''

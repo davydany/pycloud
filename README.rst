@@ -38,12 +38,11 @@ Here is how to execute a plan:
     export AWS_ACCESS_KEY="<YOUR_AWS_ACCESS_KEY>"
     export AWS_SECRET_KEY="<YOUR_AWS_SECRET_KEY>"
 
-    pycloud ./example_plans/test_plan.yml
+    pycloud execute ./example_plans/test_plan.yml
 
-Credits
--------
+If you'd like to see all the available provisioners, along with their required
+and optional arguments, run:
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+.. code:: bash
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+    pycloud docs
