@@ -1,7 +1,12 @@
 import click
+import os
+import py
 import textwrap
 
 from pycloud.base import Base
+from pycloud.core.config import PyCloudConfig
+
+pycloud_config = PyCloudConfig()
 
 class ImproperlyConfiguredProvisionerError(ValueError):
 
@@ -9,6 +14,12 @@ class ImproperlyConfiguredProvisionerError(ValueError):
 
 
 class BaseProvisioner(Base):
+    '''
+    All provisioners must inherit from this base class. 
+
+    It provides argument validation and state storage information.
+    '''
+    dry_run = False
 
     name = None
 
@@ -20,10 +31,14 @@ class BaseProvisioner(Base):
 
     optional_args = []
 
+
     def __init__(self):
 
         super(BaseProvisioner, self).__init__()
         self.kwargs = None
+
+        # inject the 'task_name' argument to 'required_arguments'
+        self.required_args.append('name')
 
         # verify that Provisioner is configured properly
         if not self.name:
@@ -53,6 +68,12 @@ class BaseProvisioner(Base):
         if val == None:
             raise ValueError('"%s" should not be null' % name)
 
+    def verify_is_type(self, name, val, data_type):
+
+        
+        if not isinstance(val, data_type):
+            raise ValueError('"%s" is not of type "%s". It is "%s"' % (name, data_type, type(val)))
+
     def validate_kwargs(self):
         '''
         Validate the kwargs
@@ -79,19 +100,66 @@ class BaseProvisioner(Base):
             if arg not in allowed_args:
                 raise ImproperlyConfiguredProvisionerError('The configured argument "%s" is not an allowed argument.' % arg)
 
-
-    def provision(self, **kwargs):
+    def verify(self, **kwargs):
         '''
-        This method needs to be implemented and use 'self.kwargs'.
+        This method needs to be implemented and use 'kwargs' for parameters it needs.
         '''
-        raise NotImplementedError("Subclass of 'BaseProvisioner' has not implemented 'provision()'.")
+        raise NotImplementedError("Subclass of 'BaseProvisioner' has not implemented 'verify()'.")
 
-    def run(self):
+    def up(self, name, **kwargs):
+        '''
+        This method needs to be implemented and use 'kwargs' for parameters it needs.
+        '''
+        raise NotImplementedError("Subclass of 'BaseProvisioner' has not implemented 'up()'.")
+
+    def down(self, name, **kwargs):
+        '''
+        This method needs to be implemented and use 'kwargs' for parameters it needs.
+        '''
+        raise NotImplementedError("Subclass of 'BaseProvisioner' has not implemented 'down()'.")
+
+    def setup(self):
 
         self.validate_kwargs()
-        self.provision(**self.kwargs)
+        task_name = self.kwargs.pop('name')
+        click.secho("--| SETUP - TASK: %s" % task_name, fg='green')
+        self.task_name = task_name
+        try:
+            self.verify(task_name, **self.kwargs)
+        except Exception:
+            click.secho("An Error Occurred while trying to verify the inputs in %s.verify()" % (self.__class__.__name__), fg='red')
+            raise
 
+        try:
+            self.up(task_name, **self.kwargs)
+        except Exception:
+            click.secho("An Error Occurred while trying to run %s.up()" % (self.__class__.__name__), fg='red')
+            raise
 
+    def teardown(self):
+
+        self.validate_kwargs()
+        task_name = self.kwargs.pop('name')
+        click.secho("--| TEARDOWN - TASK: %s" % task_name, fg='green')
+        self.task_name = task_name
+        try:
+            self.verify(task_name, **self.kwargs)
+        except Exception:
+            click.secho("An Error Occurred while trying to verify the inputs in %s.verify()" % (self.__class__.__name__), fg='red')
+            raise
+
+        try:
+            self.down(task_name, **self.kwargs)
+        except Exception:
+            click.secho("An Error Occurred while trying to run %s.down()" % (self.__class__.__name__), fg='red')
+            raise
+    # State Management -------------------------------------------------------------------------------------------------
+    @property
+    def config(self):
+
+        return pycloud_config
+
+    # Help -------------------------------------------------------------------------------------------------------------
     @classmethod
     def help(cls):
 

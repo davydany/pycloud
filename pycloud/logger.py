@@ -37,6 +37,11 @@ def configure_logger(level=None):
             'level': level,
             'propagate': False,
         },
+        'paramiko': {
+            'handlers': ['stream'],
+            'level': level,
+            'propgate': True
+        }
     },
 }
 
