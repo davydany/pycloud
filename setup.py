@@ -15,7 +15,8 @@ requirements = [
     'Click>=6.0',
     'boto>=2.49.0',
     'PyYAML>=3.0',
-    'paramiko>=2.4.1'
+    'paramiko>=2.4.1',
+    'sultan>=0.8.1'
 ]
 
 setup_requirements = [ ]
