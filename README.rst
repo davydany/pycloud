@@ -58,6 +58,10 @@ and optional arguments, run:
 Using the docs in **pycloud docs**, you can create your own plan, like the one
 below:
 
+**WARNING:** Setting **max_count** under **ec2_instance** to a value larger than
+1 will make that many instances on EC2, and Amazon will charge you for those
+instances.
+
 .. code:: yaml
 
     ---
