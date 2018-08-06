@@ -68,6 +68,11 @@ class BaseProvisioner(Base):
         if val == None:
             raise ValueError('"%s" should not be null' % name)
 
+    def verify_exists(self, path):
+
+        if not os.path.exists(path):
+            raise IOError("'%s' does not exist, when it is supposed to." % (path))
+
     def verify_is_type(self, name, val, data_type):
 
         
