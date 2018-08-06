@@ -51,6 +51,10 @@ class SSHKeyGenerator(FileSystemProvisionerMixin, BaseProvisioner):
         if os.path.exists(private_keypath):
             raise IOError("Private Key exists. Halting generation because we don't want to overwrite it.")
 
+        if self.dry_run:
+            self.logger.info("A '%s' SSH Key will be generated in '%s' if dry-run flag was not set." % (key_type, out_dir))
+            return
+
         # run ssh-keygen to generate files
         with Sultan.load(cwd=out_dir) as s:
             
@@ -69,6 +73,9 @@ class SSHKeyGenerator(FileSystemProvisionerMixin, BaseProvisioner):
 
     def down(self, name, key_type=None, file=None, passphrase=None, out_dir=None, **kwargs):
 
+        if self.dry_run:
+            self.logger.info("Dry-Run Enabled, so stopping here.")
+            return
 
         public_keypath = os.path.join(out_dir, 'id_%s.pub' % (key_type))
         private_keypath = os.path.join(out_dir, 'id_%s' % (key_type))
@@ -104,7 +111,8 @@ class UserAdd(AWSProvisionerMixin, FileSystemProvisionerMixin, BaseProvisioner):
 
     def up(self, name, instance_id_ref=None, region=None, key_name=None, user_name=None, AWS_ACCESS_KEY=None, AWS_SECRET_KEY=None, remote_ssh_port=22, default_shell=None, public_key=None):
 
-        self.verify_exists(public_key)
+        if not self.dry_run:
+            self.verify_exists(public_key)
 
         # create connection
         conn = self.ec2_connect(region, AWS_ACCESS_KEY, AWS_SECRET_KEY)
@@ -118,19 +126,28 @@ class UserAdd(AWSProvisionerMixin, FileSystemProvisionerMixin, BaseProvisioner):
         instances = conn.get_only_instances(instance_ids=instance_ids)
         for instance in instances:
 
-            exit_status = self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port, 
-                'sudo useradd {username} -m -s {default_shell}'.format(
-                    username=user_name,
-                    default_shell=default_shell
+            if self.dry_run:
+                self.logger.info("User '%s' will be created if dry-run flag was not set." % user_name)
+            else: 
+                self.logger.info("Creating User '%s'" % (user_name))
+                exit_status = self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port, 
+                    'sudo useradd {username} -m -s {default_shell}'.format(
+                        username=user_name,
+                        default_shell=default_shell
+                    )
                 )
-            )
-            if exit_status == 0:
-                self.logger.info("Successfully added user '%s'" % user_name)
-            else:
-                self.logger.error("Unable to add user '%s'" % user_name)
+                if exit_status == 0:
+                    self.logger.info("Successfully added user '%s'" % user_name)
+                else:
+                    self.logger.error("Unable to add user '%s'" % user_name)
 
             # check if the public key exists
             if public_key:
+
+                if self.dry_run:
+                    self.logger.info("Public Key '%s' would be transfered to '%s' if dry-run flag was not set." % (public_key, instance.public_dns_name))
+                    return
+
                 self.logger.info("Public Key '%s' was provided. Setting it up for user '%s' on remote instance." % (public_key, user_name))
                 public_key_name = os.path.basename(public_key)
                 user_ssh_dir = os.path.join('/home', user_name, '.ssh/', public_key_name)
