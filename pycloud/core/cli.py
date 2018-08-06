@@ -5,7 +5,9 @@ import sys
 import click
 
 from pycloud.logger import configure_logger, get_logger, ALLOWED_LOG_LEVELS
-from pycloud.pycloud.provisioners.plan_executor import PlanExecutor
+from pycloud.core.provisioners.plan_executor import PlanExecutor
+from pycloud.core.config import PyCloudConfig
+from pycloud.core.keypair_storage import KeyPairStorage
 
 logger = get_logger()
 
@@ -38,6 +40,9 @@ def pycloud(ctx, log_level):
     """
     PyCloud Provisions a VM in the cloud,
     """
+    KeyPairStorage.initialize()
+    PyCloudConfig.initialize_state_mgmt()
+
     ctx.obj = {}
     configure_logger(level=log_level)
     return 0
@@ -49,7 +54,7 @@ def pycloud(ctx, log_level):
               help='AWS Secret Key. You can also set environment variable AWS_SECRET_KEY.')
 @click.argument('plan', type=click.Path(exists=True))
 @click.pass_context
-def execute(ctx, access_key, secret_key, plan):
+def setup(ctx, access_key, secret_key, plan):
     '''
     Sets up the infrastructure as specified by the plan.
     '''
@@ -57,7 +62,7 @@ def execute(ctx, access_key, secret_key, plan):
     ctx.obj['AWS_ACCESS_KEY'] = access_key
     ctx.obj['AWS_SECRET_KEY'] = secret_key
     executor = PlanExecutor(plan, _globals=ctx.obj)
-    executor.execute_plan()
+    executor.setup()
 
 
 @pycloud.command()
@@ -67,7 +72,7 @@ def execute(ctx, access_key, secret_key, plan):
               help='AWS Secret Key. You can also set environment variable AWS_SECRET_KEY.')
 @click.argument('plan', type=click.Path(exists=True))
 @click.pass_context
-def dry_run(ctx, access_key, secret_key, plan):
+def dry_setup(ctx, access_key, secret_key, plan):
     '''
     Sets up the infrastructure requested in the CLI.
     '''
@@ -75,7 +80,42 @@ def dry_run(ctx, access_key, secret_key, plan):
     ctx.obj['AWS_ACCESS_KEY'] = access_key
     ctx.obj['AWS_SECRET_KEY'] = secret_key
     executor = PlanExecutor(plan, _globals=ctx.obj)
-    executor.dry_execute_plan()
+    executor.dry_setup()
+
+@pycloud.command()
+@click.option('-a', '--access-key', envvar='AWS_ACCESS_KEY',
+              help='AWS Access Key. You can also set environment variable AWS_ACCESS_KEY.')
+@click.option('-s', '--secret-key', envvar='AWS_SECRET_KEY',
+              help='AWS Secret Key. You can also set environment variable AWS_SECRET_KEY.')
+@click.argument('plan', type=click.Path(exists=True))
+@click.pass_context
+def teardown(ctx, access_key, secret_key, plan):
+    '''
+    Tears down the infrastructure as specified by the plan.
+    '''
+    validate_for_aws(access_key, secret_key)
+    ctx.obj['AWS_ACCESS_KEY'] = access_key
+    ctx.obj['AWS_SECRET_KEY'] = secret_key
+    executor = PlanExecutor(plan, _globals=ctx.obj)
+    executor.teardown()
+
+
+@pycloud.command()
+@click.option('-a', '--access-key', envvar='AWS_ACCESS_KEY',
+              help='AWS Access Key. You can also set environment variable AWS_ACCESS_KEY.')
+@click.option('-s', '--secret-key', envvar='AWS_SECRET_KEY',
+              help='AWS Secret Key. You can also set environment variable AWS_SECRET_KEY.')
+@click.argument('plan', type=click.Path(exists=True))
+@click.pass_context
+def dry_teardown(ctx, access_key, secret_key, plan):
+    '''
+    Simulates a Tear down the infrastructure requested in the CLI. 
+    '''
+    validate_for_aws(access_key, secret_key)
+    ctx.obj['AWS_ACCESS_KEY'] = access_key
+    ctx.obj['AWS_SECRET_KEY'] = secret_key
+    executor = PlanExecutor(plan, _globals=ctx.obj)
+    executor.dry_teardown()
 
 @pycloud.command()
 @click.pass_context

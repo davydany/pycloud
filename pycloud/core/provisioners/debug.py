@@ -2,8 +2,8 @@ import click
 import os
 import pwd
 
-from pycloud.pycloud.provisioners.base import BaseProvisioner
-from pycloud.pycloud.registry import Registry
+from pycloud.core.provisioners.base import BaseProvisioner
+from pycloud.core.registry import Registry
 
 class DebugProvisioner(BaseProvisioner):
 
@@ -18,7 +18,7 @@ class DebugProvisioner(BaseProvisioner):
 
     optional_args = ['whoami']
 
-    def provision(self, echo=None, whoami=None, **kwargs):
+    def up(self, name, echo=None, whoami=None, **kwargs):
 
         print(echo)
 
@@ -40,7 +40,7 @@ class ErrorProvisioner(BaseProvisioner):
 
     optional_args = None
 
-    def provision(self, error_msg, **kwargs):
+    def up(self, name, error_msg, **kwargs):
 
         click.secho('About to raise exception with message: %s' % error_msg, fg='green')
         raise ValueError(error_msg)

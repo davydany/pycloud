@@ -13,9 +13,9 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
-    'sultan>=0.8.1',
     'boto>=2.49.0',
-    'PyYAML>=3.0'
+    'PyYAML>=3.0',
+    'paramiko>=2.4.1'
 ]
 
 setup_requirements = [ ]
@@ -40,7 +40,7 @@ setup(
     description="PyCloud",
     entry_points={
         'console_scripts': [
-            'pycloud=pycloud.pycloud.cli:pycloud',
+            'pycloud=pycloud.core.cli:pycloud',
         ],
     },
     install_requires=requirements,

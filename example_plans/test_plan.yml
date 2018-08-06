@@ -1,9 +1,12 @@
 ---
 - debug:
+    name: Debug Statements
     echo: Hello World
     whoami: true
 - err:
+    name: Error Statements
     error_msg: This is a sample error message
 - debug:
+    name: Error Statements that should not be reached
     echo: Hello After Exception
     whoami: true

@@ -7,8 +7,7 @@
 import unittest
 from click.testing import CliRunner
 
-from pycloud import pycloud
-from pycloud.pycloud import cli
+from pycloud.core import cli
 
 
 class TestPyCloud(unittest.TestCase):
@@ -20,9 +19,6 @@ class TestPyCloud(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_000_something(self):
-        """Test something."""
-
     def test_command_line_interface(self):
         """Test the CLI."""
         runner = CliRunner()
@@ -31,4 +27,5 @@ class TestPyCloud(unittest.TestCase):
         assert '' in result.output
         help_result = runner.invoke(cli.pycloud, ['--help'])
         assert help_result.exit_code == 0
-        assert 'dry_run  Sets up the infrastructure requested in the' in help_result.output
+        assert 'setup' in help_result.output
+        assert 'teardown' in help_result.output
