@@ -17,7 +17,7 @@ Getting Started
 
 .. code:: bash
 
-  pip install --upgrade pycloud
+  pip install --upgrade git+https://github.com/davydany/pycloud
 
 Usage
 -----
@@ -38,7 +38,7 @@ Here is how to execute a plan:
     export AWS_ACCESS_KEY="<YOUR_AWS_ACCESS_KEY>"
     export AWS_SECRET_KEY="<YOUR_AWS_SECRET_KEY>"
 
-    pycloud execute ./example_plans/test_plan.yml
+    pycloud setup ./example_plans/test_plan.yml
 
 If you'd like to see all the available provisioners, along with their required
 and optional arguments, run:
