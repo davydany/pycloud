@@ -106,7 +106,7 @@ class AWSProvisionerMixin(Base):
         '''
         hostname = instance.public_dns_name
         client = self.get_paramiko_client(connection, instance, fs_keypair, username, ssh_port=ssh_port, max_rt=max_rt)
-        self.logger.debug("Running Command on %s@%s: %s" % (username, hostname, command))
+        self.logger.info("Running Command on %s@%s: %s" % (username, hostname, command))
         result = client.exec_command(command)
         exit_status = -1
         if result:

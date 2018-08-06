@@ -150,13 +150,27 @@ class UserAdd(AWSProvisionerMixin, FileSystemProvisionerMixin, BaseProvisioner):
 
                 self.logger.info("Public Key '%s' was provided. Setting it up for user '%s' on remote instance." % (public_key, user_name))
                 public_key_name = os.path.basename(public_key)
-                user_ssh_dir = os.path.join('/home', user_name, '.ssh/', public_key_name)
+                remote_user_ssh_dir = os.path.join('/home', user_name, '.ssh/')
+                remote_user_publickey = os.path.join(remote_user_ssh_dir, 'authorized_keys')
                 self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port,
-                    'sudo mkdir -p {ssh_dir}'.format(ssh_dir=os.path.dirname(user_ssh_dir))
+                    'sudo mkdir -p {ssh_dir}'.format(ssh_dir=remote_user_ssh_dir)
                 )
-                self.sftp_file(conn, instance, fs_keypair, admin_user, remote_ssh_port, public_key, user_ssh_dir)
+                self.sftp_file(conn, instance, fs_keypair, admin_user, remote_ssh_port, public_key, remote_user_publickey)
                 self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port,
-                    'sudo chmod -R 400 {ssh_dir}'.format(ssh_dir=user_ssh_dir)
+                    'sudo chown -R {username}:{groupname} {ssh_dir}'.format(
+                        ssh_dir=remote_user_ssh_dir,
+                        username=user_name,
+                        groupname=user_name)
+                )
+                self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port,
+                    'sudo chmod -R 700 {path}'.format(
+                        path=remote_user_ssh_dir
+                    )
+                )
+                self.run_shell_command(conn, instance, fs_keypair, admin_user, remote_ssh_port,
+                    'sudo chmod -R 400 {path}'.format(
+                        path=remote_user_publickey
+                    )
                 )
         
 

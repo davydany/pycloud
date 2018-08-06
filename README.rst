@@ -86,7 +86,7 @@ below:
             security_group: ubuntu_sg
             key_name: admin_kp
             min_count: 1
-            max_count: 2
+            max_count: 1
             instance_id_ref: $ubuntu_vms
 
         - ssh_keygen:
