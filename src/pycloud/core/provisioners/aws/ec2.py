@@ -1,6 +1,7 @@
 import time
-# 
+
 from boto import ec2
+from boto.exception import EC2ResponseError
 
 from pycloud.core.keypair_storage import KeyPairStorage
 from pycloud.core.provisioners.base import BaseProvisioner
@@ -40,7 +41,9 @@ class EC2KeyPairProvisioner(AWSProvisionerMixin, BaseProvisioner):
 
         if existing_key_pairs == []:
             self.logger.info('Creating a new Key Pair with name "%s"'% (key_name))
-            ec2_keypair = conn.create_key_pair(key_name, dry_run=self.dry_run)
+            try:
+                ec2_keypair = conn.create_key_pair(key_name, dry_run=self.dry_run)
+            except boto.
             fs_keypair = KeyPairStorage(key_name)
             fs_keypair.save(ec2_keypair)
             
