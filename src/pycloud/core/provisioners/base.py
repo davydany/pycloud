@@ -1,6 +1,5 @@
 import click
 import os
-import py
 import textwrap
 
 from pycloud.base import Base

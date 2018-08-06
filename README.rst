@@ -46,3 +46,20 @@ and optional arguments, run:
 .. code:: bash
 
     pycloud docs
+
+If you'd like to run the process in reverse, and teardown the setup plan, run:
+
+.. code:: bash
+
+    pycloud teardown ./example_plans/test_plan.yml
+
+If you'd like run both **setup** and **teardown** in dry-run, mode to verify
+the plans are valid, run the following, respectively:
+
+.. code:: bash
+
+    # dry-run setup
+    pycloud dry_setup ./example_plans/test_plan.yml
+
+    # dry-run teardown
+    pycloud dry_teardown ./example_plans/test_plan.yml

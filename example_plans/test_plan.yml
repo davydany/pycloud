@@ -1,5 +1,4 @@
 ---
-
 tasks:
     - ec2_security_group:
         name: Create Security Groups for our Ubuntu Instance
